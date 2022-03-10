@@ -1,15 +1,47 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
-const express_1 = require("express");
-const router = (0, express_1.Router)();
+var express_1 = require("express");
+function requiredAuth(req, res, next) {
+    if (req.session && req.session.loggedIn) {
+        next();
+        return;
+    }
+    res.status(403);
+    res.send('You are not permitted');
+}
+var router = (0, express_1.Router)();
 exports.router = router;
-const path = require('path');
-router.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/pages/login/index.html'));
+router.post('/login', function (req, res) {
+    var _a = req.body, username = _a.username, password = _a.password;
+    if (username && password && username === 'admin' && password === '1234qaz') {
+        req.session = { loggedIn: true };
+        res.redirect('/');
+    }
+    else {
+        res.send('You need admin access to view this page');
+    }
 });
-router.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    console.log(username, password);
-    res.send('works!');
+router.get('/logout', function (req, res) {
+    req.session = undefined;
+    res.redirect('/');
 });
+router.get('/protected', requiredAuth, function (req, res) {
+    res.send('Welcome, Authenticated User');
+});
+router.get('/', function (req, res) {
+    if (req.session && req.session.loggedIn) {
+        res.send('You are now Logged in!');
+    }
+    else {
+        res.send('You need to login =(');
+    }
+});
+function post(routeName) {
+    return function (target, key, desc) {
+        router.post(routeName, target[key]);
+    };
+}
+function use(middleware) {
+    return function (target, key, desc) { };
+}
