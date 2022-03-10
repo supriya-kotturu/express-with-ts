@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 
+// GOT REFACTORED USING DECORATORS : FILE NOT USED
 export interface RequestWithBody extends Request {
 	body: { [key: string]: string | undefined };
 }
@@ -15,17 +16,6 @@ function requiredAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 const router = Router();
-
-router.post('/login', (req: RequestWithBody, res: Response) => {
-	const { username, password } = req.body;
-
-	if (username && password && username === 'admin' && password === '1234qaz') {
-		req.session = { loggedIn: true };
-		res.redirect('/');
-	} else {
-		res.send('You need admin access to view this page');
-	}
-});
 
 router.get('/logout', (req: Request, res: Response) => {
 	req.session = undefined;

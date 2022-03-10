@@ -12,16 +12,6 @@ function requiredAuth(req, res, next) {
 }
 var router = (0, express_1.Router)();
 exports.router = router;
-router.post('/login', function (req, res) {
-    var _a = req.body, username = _a.username, password = _a.password;
-    if (username && password && username === 'admin' && password === '1234qaz') {
-        req.session = { loggedIn: true };
-        res.redirect('/');
-    }
-    else {
-        res.send('You need admin access to view this page');
-    }
-});
 router.get('/logout', function (req, res) {
     req.session = undefined;
     res.redirect('/');
